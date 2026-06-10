@@ -52,10 +52,10 @@ body {
 
 .product-item img {
   width: 100%;
-  height: auto;
+  height: 160px;
+  object-fit: contain;
   border-radius: 8px;
   margin-bottom: 10px;
-  max-height: 160px; /* Limita a altura da imagem */
 }
 
 .product-item h2 {
@@ -97,6 +97,41 @@ button:hover {
   background-color: #e06f13;
 }
 
+/* Wrapper do botão "Ir para o Carrinho" - ocupa linha inteira */
+.cart-button-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.cart-button-wrapper button {
+  width: auto;
+  padding: 12px 30px;
+  font-size: 16px;
+  background-color: #f47c17;
+}
+
+.cart-button-wrapper button:hover {
+  background-color: #d86a11;
+}
+
+#cart-count {
+  background-color: white;
+  color: #f47c17;
+  border-radius: 50%;
+  padding: 1px 7px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-left: 6px;
+  display: none;
+}
+
+#cart-count.visible {
+  display: inline;
+}
+
 /* Estilos do carrinho */
 #cart-container {
   width: 70%;
@@ -125,8 +160,9 @@ button:hover {
 .cart-item img {
   height: 50px;
   width: 50px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 5px;
+  flex-shrink: 0;
 }
 
 .cart-item-info {
@@ -151,7 +187,15 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.quantity-buttons span {
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
 }
 
 button.quantity-btn {
@@ -162,7 +206,7 @@ button.quantity-btn {
   font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
-  margin: 0 5px;
+  width: auto;
 }
 
 button.quantity-btn:hover {
@@ -178,8 +222,9 @@ button.quantity-btn:hover {
   border-top: 1px solid #ddd;
 }
 
-#cart-summary #cart-total {
+#cart-total {
   font-weight: bold;
+  font-size: 18px;
 }
 
 #checkout-button {
@@ -190,24 +235,21 @@ button.quantity-btn:hover {
   font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
+  width: auto;
 }
 
 #checkout-button:hover {
   background-color: #d86a11;
 }
 
-/* Botão de ir para o carrinho */
-#cart-button {
-  background-color: #f47c17;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 30px;
-}
+/* Responsivo para mobile */
+@media (max-width: 600px) {
+  #cart-container {
+    width: 95%;
+  }
 
-#cart-button:hover {
-  background-color: #d86a11;
+  .cart-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 }
