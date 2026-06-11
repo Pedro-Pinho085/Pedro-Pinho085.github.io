@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0E5E45">
-<title>Caixa Verde · PDV</title>
+<title>PinhoPDV · PDV</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230E5E45'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='monospace'>R$</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   CAIXA VERDE — Sistema PDV
+   PinhoPDV — Sistema PDV
    Paleta: verde-cédula sobre papel de cupom
    ============================================================ */
 :root{
@@ -384,7 +384,7 @@ tbody tr:hover{background:#FAFAF4}
     <div class="login-head">
       <div class="brand-mark">
         <div class="sq">R$</div>
-        <h1 id="loginStoreName">Caixa Verde<small>sistema de ponto de venda</small></h1>
+        <h1 id="loginStoreName">PinhoPDV<small>sistema de ponto de venda</small></h1>
       </div>
     </div>
     <div class="login-body">
@@ -401,7 +401,7 @@ tbody tr:hover{background:#FAFAF4}
 <div class="sb-backdrop" id="sbBackdrop" onclick="toggleSidebar(false)"></div>
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
-    <div class="brand-mark"><div class="sq">R$</div><h1 id="sbStoreName">Caixa Verde<small>ponto de venda</small></h1></div>
+    <div class="brand-mark"><div class="sq">R$</div><h1 id="sbStoreName">PinhoPDV<small>ponto de venda</small></h1></div>
   </div>
   <nav class="sb-nav" id="sbNav">
     <button class="nav-item on" data-go="pdv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l2 12h11l2-8H7"/><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/></svg>Frente de caixa<span class="kbd">F2</span></button>
@@ -567,7 +567,7 @@ const S={
   customers:DB.get('customers',[]),
   sales:DB.get('sales',[]),
   cashSessions:DB.get('cashSessions',[]),
-  settings:DB.get('settings',{storeName:'Caixa Verde',doc:'',address:'',phone:'',footer:'Obrigado pela preferência! Volte sempre.',allowNoStock:true,theme:'verde'}),
+  settings:DB.get('settings',{storeName:'PinhoPDV',doc:'',address:'',phone:'',footer:'Obrigado pela preferência! Volte sempre.',allowNoStock:true,theme:'verde'}),
   seq:DB.get('seq',{sale:0})
 };
 const save=k=>DB.set(k,S[k]);
@@ -698,7 +698,7 @@ function enterApp(){
   applyStoreName();updateCashPill();go('pdv');
 }
 function applyStoreName(){
-  const n=S.settings.storeName||'Caixa Verde';
+  const n=S.settings.storeName||'PinhoPDV';
   $('sbStoreName').innerHTML=esc(n)+'<small>ponto de venda</small>';
   $('loginStoreName').innerHTML=esc(n)+'<small>sistema de ponto de venda</small>';
   document.title=n+' · PDV';
@@ -947,7 +947,7 @@ function finishSale(){
 function receiptHTML(sale){
   const st=S.settings;
   return `<div class="receipt">
-    <div class="c b" style="font-size:13px">${esc(st.storeName||'Caixa Verde')}</div>
+    <div class="c b" style="font-size:13px">${esc(st.storeName||'PinhoPDV')}</div>
     ${st.doc?`<div class="c">CNPJ/CPF: ${esc(st.doc)}</div>`:''}
     ${st.address?`<div class="c">${esc(st.address)}</div>`:''}
     ${st.phone?`<div class="c">Tel: ${esc(st.phone)}</div>`:''}
@@ -1363,7 +1363,7 @@ function renderConfig(){
   </div>`;
 }
 function saveSettings(){
-  Object.assign(S.settings,{storeName:$('stNome').value.trim()||'Caixa Verde',doc:$('stDoc').value.trim(),phone:$('stFone').value.trim(),address:$('stEnd').value.trim(),footer:$('stFoot').value.trim(),allowNoStock:$('stNoStock').checked});
+  Object.assign(S.settings,{storeName:$('stNome').value.trim()||'PinhoPDV',doc:$('stDoc').value.trim(),phone:$('stFone').value.trim(),address:$('stEnd').value.trim(),footer:$('stFoot').value.trim(),allowNoStock:$('stNoStock').checked});
   save('settings');applyStoreName();toast('Dados da loja salvos');
 }
 function openUserModal(id){
