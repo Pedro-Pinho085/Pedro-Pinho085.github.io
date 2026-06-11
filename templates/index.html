@@ -1,0 +1,157 @@
+<html lang="pt-br"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freitas Mercadinho — Compras Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span>📍 Sua satisfação é nosso compromisso!</span>
+  <span>📞 Chame no WhatsApp</span>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">
+        <span class="brand-icon">🏪</span>
+        <div class="brand-text">
+          <span class="brand-name">FREITAS</span>
+          <span class="brand-sub">MERCADINHO</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-search">
+      <input type="text" id="searchInput" placeholder="🔍  Buscar produto...">
+    </div>
+
+    <button class="cart-trigger" id="cartTrigger">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"></path>
+      </svg>
+      <span>Carrinho</span>
+      <span class="badge" id="cartBadge" hidden="">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <p class="hero-tag">🛒 Peça sem sair de casa</p>
+      <h1 class="hero-title">O mercadinho<br>do seu bairro,<br><span>na palma da mão.</span></h1>
+      <p class="hero-slogan">Pães · Hortifruti · Cereais · Bebidas · Carvão</p>
+      <button class="btn-hero" onclick="document.querySelector('.menu-section').scrollIntoView({behavior:'smooth'})">
+        Ver produtos ↓
+      </button>
+    </div>
+    <div class="hero-badge-wrap">
+      <div class="hero-badge">
+        <span class="badge-emoji">🤝</span>
+        <span>Sua satisfação<br>é nosso<br>compromisso</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIAS -->
+<nav class="cat-nav" id="catNav">
+  <button class="cat-btn active" data-cat="">🏪 Todos</button>
+  <button class="cat-btn" data-cat="Pães">🍞 Pães</button>
+  <button class="cat-btn" data-cat="Hortifruti">🥦 Hortifruti</button>
+  <button class="cat-btn" data-cat="Cereais">🌾 Cereais</button>
+  <button class="cat-btn" data-cat="Bebidas">🍺 Bebidas</button>
+  <button class="cat-btn" data-cat="Outros">📦 Outros</button>
+</nav>
+
+<!-- PRODUTOS -->
+<main class="menu-section">
+  <div class="section-header">
+    <h2 class="section-title" id="sectionTitle">Todos os Produtos</h2>
+    <span class="product-count" id="productCount"></span>
+  </div>
+  <div class="product-grid" id="productGrid">
+    <div class="loading-state">
+      <span>🛒</span>
+      <p>Carregando produtos…</p>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span>🏪 FREITAS MERCADINHO</span>
+      <p>Sua satisfação é nosso compromisso</p>
+    </div>
+    <div class="footer-links">
+      <p>📱 <a href="https://www.facebook.com/freitasmercadinho/" target="_blank">Facebook</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <h2>🛒 Seu Carrinho</h2>
+    <button class="drawer-close" id="drawerClose">✕</button>
+  </div>
+
+  <div class="drawer-body" id="cartItems">
+    <div class="cart-empty">
+      <span>🛒</span>
+      <p>Carrinho vazio!<br>Adicione produtos ao lado.</p>
+    </div>
+  </div>
+
+  <div class="drawer-footer" id="drawerFooter" style="display:none">
+    <div class="total-line">
+      <span>Total do Pedido</span>
+      <strong id="cartTotal">R$ 0,00</strong>
+    </div>
+    <div class="customer-fields">
+      <div class="input-group">
+        <label for="customerName">Seu nome *</label>
+        <input type="text" id="customerName" placeholder="Ex: Maria da Silva" maxlength="60">
+      </div>
+      <div class="input-group">
+        <label for="customerPhone">WhatsApp (opcional)</label>
+        <input type="tel" id="customerPhone" placeholder="(85) 9 9999-9999" maxlength="20">
+      </div>
+    </div>
+    <button class="btn-checkout" id="checkoutBtn">
+      ✅ Confirmar Pedido
+    </button>
+  </div>
+</aside>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="modalOverlay" style="display:none">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <h2>Pedido enviado!</h2>
+    <p id="modalMsg"></p>
+    <a class="btn-whatsapp" id="whatsappLink" href="#" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+      </svg>
+      Enviar pedido pelo WhatsApp
+    </a>
+    <button class="btn-secondary" id="modalClose">Fechar</button>
+  </div>
+</div>
+
+<script src="/static/js/store.js"></script>
+
+
+</body></html>
