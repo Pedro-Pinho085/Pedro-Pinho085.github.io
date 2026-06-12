@@ -57,7 +57,7 @@ input,select,textarea{font-family:inherit;font-size:1rem;color:var(--txt)}
 h1,h2,h3{font-family:var(--disp);color:var(--ink);letter-spacing:-.01em}
 
 /* ---------- LOGIN ---------- */
-#loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:
+#loginScreen,#licScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:
   radial-gradient(1200px 600px at 80% -10%,rgba(var(--bright-rgb),.25),transparent 60%),
   radial-gradient(900px 500px at -10% 110%,rgba(232,163,61,.14),transparent 55%),
   var(--ink);z-index:200;padding:20px}
@@ -297,6 +297,22 @@ tbody tr:hover{background:#FAFAF4}
 .receipt .tot-row{font-size:14px;font-weight:700;display:flex;justify-content:space-between;margin:4px 0}
 .receipt-preview-wrap{background:#EAE8DE;padding:24px;border-radius:12px;display:flex;justify-content:center;max-height:50vh;overflow-y:auto}
 .receipt-preview-wrap .receipt{box-shadow:0 4px 18px rgba(0,0,0,.18)}
+/* ---------- LICENÇA / ASSINATURA ---------- */
+#licScreen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:
+  radial-gradient(1200px 600px at 80% -10%,rgba(var(--bright-rgb),.25),transparent 60%),
+  radial-gradient(900px 500px at -10% 110%,rgba(232,163,61,.14),transparent 55%),
+  var(--ink);z-index:210;padding:20px}
+#licScreen textarea{width:100%;min-height:96px;padding:12px 13px;border:1.5px solid var(--line);border-radius:10px;background:#FCFBF7;font-family:var(--mono);font-size:.78rem;resize:vertical;line-height:1.4}
+.lic-status{border-radius:10px;padding:11px 13px;font-size:.85rem;line-height:1.5;margin-bottom:14px}
+.lic-status.ok{background:var(--brand-soft);color:var(--brand)}
+.lic-status.warn{background:var(--warm-soft);color:#8A5A14}
+.lic-status.err{background:var(--danger-soft);color:var(--danger)}
+#licBanner{display:none;align-items:center;gap:10px;padding:10px 22px;font-size:.85rem;font-weight:600;border-bottom:1px solid var(--line)}
+#licBanner.warn{display:flex;background:var(--warm-soft);color:#8A5A14}
+#licBanner.danger{display:flex;background:var(--danger-soft);color:var(--danger)}
+#licBanner button{margin-left:auto;font-size:.78rem;font-weight:700;text-decoration:underline;flex-shrink:0}
+@media(max-width:920px){#licBanner{padding:10px 14px}}
+
 @media print{
   @page{margin:5mm}
   body>*:not(#receiptPrint){display:none!important}
@@ -305,6 +321,9 @@ tbody tr:hover{background:#FAFAF4}
   .receipt::after{display:none}
 }
 
+#licScreen{display:none;z-index:210}
+.lic-key{width:100%;min-height:96px;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#FCFBF7;font-family:var(--mono);font-size:.78rem;resize:vertical;word-break:break-all}
+.lic-days{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.78rem;font-weight:700}
 /* ---------- TOAST / CONFIRM ---------- */
 #toasts{position:fixed;top:18px;right:18px;z-index:300;display:flex;flex-direction:column;gap:9px;pointer-events:none}
 .toast{background:var(--ink);color:#fff;padding:12px 16px;border-radius:11px;font-size:.86rem;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;animation:slideL .25s cubic-bezier(.2,.9,.3,1.2);max-width:320px}
@@ -379,6 +398,39 @@ tbody tr:hover{background:#FAFAF4}
 </head>
 <body>
 
+<!-- ====== ATIVAÇÃO DA ASSINATURA ====== -->
+<div id="licScreen">
+  <div class="login-card">
+    <div class="login-head">
+      <div class="brand-mark"><div class="sq">R$</div><h1>PinhoPDV<small>sistema de ponto de venda</small></h1></div>
+    </div>
+    <div class="login-body">
+      <h2 id="licTitle" style="font-size:1.1rem;margin-bottom:6px">Ative sua assinatura</h2>
+      <p id="licSub" style="font-size:.86rem;color:var(--txt-soft);line-height:1.5;margin-bottom:14px">Cole abaixo a chave de ativação que você recebeu.</p>
+      <textarea class="lic-key" id="licKey" placeholder="Cole aqui a chave de ativação…" spellcheck="false"></textarea>
+      <button class="btn btn-money btn-block" style="margin-top:12px" onclick="doActivate()">Ativar assinatura</button>
+      <button class="btn btn-ghost btn-block" id="licBackupBtn" style="margin-top:8px;display:none" onclick="exportBackup()">⬇ Exportar backup dos meus dados</button>
+      <button class="btn btn-ghost btn-block" id="licCancel" style="margin-top:8px;display:none" onclick="hideLicGate()">Voltar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ATIVAÇÃO / LICENÇA ====== -->
+<div id="licScreen">
+  <div class="login-card">
+    <div class="login-head">
+      <div class="brand-mark"><div class="sq">R$</div><h1>PinhoPDV<small>ativação da assinatura</small></h1></div>
+    </div>
+    <div class="login-body">
+      <div id="licMsg"></div>
+      <div class="field"><label>Chave de ativação</label><textarea id="licKey" placeholder="Cole aqui a chave que você recebeu (começa com PINHO1.)"></textarea></div>
+      <button class="btn btn-money btn-block" onclick="activateKey()">Ativar sistema</button>
+      <div id="licExtra" style="margin-top:12px"></div>
+      <p id="licSupport" style="font-size:.78rem;color:var(--txt-soft);text-align:center;margin-top:14px;line-height:1.5"></p>
+    </div>
+  </div>
+</div>
+
 <!-- ====== LOGIN ====== -->
 <div id="loginScreen">
   <div class="login-card">
@@ -424,6 +476,7 @@ tbody tr:hover{background:#FAFAF4}
 </aside>
 
 <div class="main" id="main">
+<div id="licBanner"><span id="licBannerTxt"></span><button onclick="openLicModal()">Renovar agora</button></div>
 
 <!-- ====== TELA: PDV ====== -->
 <section class="screen on" id="screen-pdv">
@@ -603,6 +656,70 @@ function toast(msg,type='ok'){
   $('toasts').appendChild(t);setTimeout(()=>{t.style.transition='opacity .3s,transform .3s';t.style.opacity='0';t.style.transform='translateX(20px)';setTimeout(()=>t.remove(),320)},3200);
 }
 
+/* ============================================================
+   ASSINATURA / LICENÇA
+   >>> EDITE VENDOR.renovacao com seu contato (WhatsApp etc.) <<<
+   ============================================================ */
+const LICENSE_PUB={"kty":"EC","crv":"P-256","x":"4XZLUywUL4ntL3QBQhqdum8x5h-aWlsUaVy3ZerHLsw","y":"g6Ep_G5khE3qaACHsjcXLzdWvoLnykJtk0mEC0iHCow"};
+const VENDOR={renovacao:'Para renovar sua assinatura, fale com o fornecedor do sistema.'};
+const b64uToBuf=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');const bin=atob(s+'='.repeat((4-s.length%4)%4));const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u};
+function effectiveNow(){ // catraca: impede "voltar o relógio" p/ reviver licença vencida
+  const last=DB.get('lastSeen',0),now=Date.now();
+  if(now>=last){DB.set('lastSeen',now);return new Date(now)}
+  return new Date(last);
+}
+function licDaysLeft(lic){return Math.ceil((new Date(lic.e+'T23:59:59')-effectiveNow())/864e5)}
+async function verifyLicenseKey(key){
+  try{
+    const[p,sig]=String(key).trim().split('.');if(!p||!sig)return null;
+    const buf=b64uToBuf(p),lic=JSON.parse(new TextDecoder().decode(buf));
+    if(!lic.n||!/^\d{4}-\d{2}-\d{2}$/.test(lic.e||''))return null;
+    if(crypto&&crypto.subtle){
+      const k=await crypto.subtle.importKey('jwk',LICENSE_PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+      if(!await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},k,b64uToBuf(sig),buf))return null;
+      lic._v=1;
+    }else lic._v=0;
+    return lic;
+  }catch(e){return null}
+}
+async function licenseState(){
+  const rec=DB.get('license',null);
+  if(!rec||!rec.key)return{mode:'none'};
+  let lic=rec.lic;
+  if(crypto&&crypto.subtle){
+    const v=await verifyLicenseKey(rec.key);
+    if(!v||v._v!==1){DB.del('license');return{mode:'none'}}
+    lic=v;
+  }
+  const d=licDaysLeft(lic);
+  return d>0?{mode:'ok',lic,daysLeft:d}:{mode:'expired',lic,daysLeft:d};
+}
+function showLicGate(st,cancelable=false){
+  $('licScreen').style.display='flex';
+  $('licCancel').style.display=cancelable?'':'none';
+  $('licBackupBtn').style.display=(st.mode==='expired')?'':'none';
+  if(st.mode==='expired'){
+    $('licTitle').textContent='Assinatura expirada';
+    $('licSub').innerHTML='Licenciado para <b>'+esc(st.lic.n)+'</b> · venceu em '+todayStr(st.lic.e+'T12:00:00')+'.<br>'+esc(VENDOR.renovacao);
+  }else{
+    $('licTitle').textContent='Ative sua assinatura';
+    $('licSub').textContent='Cole abaixo a chave de ativação que você recebeu.';
+  }
+}
+function hideLicGate(){$('licScreen').style.display='none';$('licKey').value=''}
+async function doActivate(){
+  const key=$('licKey').value.trim();
+  if(!key)return toast('Cole a chave de ativação','warn');
+  if(!(crypto&&crypto.subtle))return toast('Para ativar, abra o sistema pelo endereço https da hospedagem.','err');
+  const lic=await verifyLicenseKey(key);
+  if(!lic||lic._v!==1)return toast('Chave inválida. Confira se copiou a chave inteira.','err');
+  if(licDaysLeft(lic)<=0)return toast('Esta chave venceu em '+todayStr(lic.e+'T12:00:00')+'. Peça uma nova.','err');
+  DB.set('license',{key,lic:{n:lic.n,e:lic.e,p:lic.p||''},at:new Date().toISOString()});
+  toast('Assinatura ativada para '+lic.n);
+  setTimeout(()=>location.reload(),600);
+}
+setInterval(async()=>{const s=await licenseState();if(s.mode!=='ok')showLicGate(s)},30*60*1000);
+
 /* ---------- COR DO SISTEMA (TEMAS) ---------- */
 const THEMES={
   verde:   {label:'Verde',    ink:'#14201B',ink2:'#1D2E26',brand:'#0E5E45',bright:'#17A673',soft:'#E3F2EB',brandRgb:'14,94,69',  brightRgb:'23,166,115',tint:'#7FE0BC',glow:'#2FD895'},
@@ -643,6 +760,98 @@ function openThemeModal(){
   openModal('Cor do sistema',
     `<p style="font-size:.84rem;color:var(--txt-soft);margin-bottom:14px">A cor vale para este dispositivo e já aparece na tela de login. Toque para aplicar na hora.</p>`+themePickerHTML(),
     `<button class="btn btn-primary" onclick="closeModal()">Pronto</button>`);
+}
+
+/* ============================================================
+   ASSINATURA / LICENÇA — chave assinada (ECDSA P-256)
+   A chave pública abaixo só VERIFICA. Quem gera é o arquivo
+   gerador (privado, do dono do sistema). Carência: 5 dias.
+   ============================================================ */
+const LIC_PUB={"kty":"EC","crv":"P-256","x":"KKz4buHkTMqfzBwnhKahe1m_21s_YfRo4A-R2VUbkaE","y":"ffRjhTG3MfFd4Njs57E8BxH9roJ1Lbxf6k6BjPf7KsQ"};
+const LIC_GRACE=5*24*3600*1000, LIC_WARN=7*24*3600*1000, DAY=24*3600*1000;
+const b64e=u8=>btoa(String.fromCharCode(...u8)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+async function licVerify(str){
+  try{
+    str=String(str||'').replace(/\s+/g,'');
+    const[tag,body,sig]=str.split('.');
+    if(tag!=='PINHO1'||!body||!sig)return{ok:false,why:'Formato de chave inválido. Confira se copiou a chave inteira.'};
+    if(!crypto.subtle)return{ok:false,why:'Este navegador/endereço não suporta ativação. Abra o sistema por um endereço https.'};
+    const pub=await crypto.subtle.importKey('jwk',LIC_PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+    const valid=await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},pub,b64d(sig),new TextEncoder().encode(body));
+    if(!valid)return{ok:false,why:'Chave inválida ou adulterada.'};
+    const p=JSON.parse(new TextDecoder().decode(b64d(body)));
+    if(!p.exp||!p.n)return{ok:false,why:'Chave incompleta.'};
+    return{ok:true,p,clean:str};
+  }catch(e){return{ok:false,why:'Não foi possível ler a chave. Confira se copiou tudo.'}}
+}
+function tickClock(){ // relógio voltou >48h => possível burla; bloqueia até acertar
+  const last=DB.get('lastTick',0),now=Date.now();
+  if(now<last-48*3600*1000)return false;
+  if(now>last)DB.set('lastTick',now);
+  return true;
+}
+function licState(){ // none | active | warn | grace | locked
+  const p=DB.get('license',null);
+  if(!p)return{st:'none'};
+  const left=p.exp-Date.now();
+  if(left>LIC_WARN)return{st:'active',p,left};
+  if(left>0)return{st:'warn',p,left};
+  if(left>-LIC_GRACE)return{st:'grace',p,left};
+  return{st:'locked',p,left};
+}
+const licDays=ms=>Math.ceil(ms/DAY);
+function licScreenShow(mode){ // 'first' | 'locked' | 'clock'
+  $('app').classList.remove('on');$('loginScreen').style.display='none';
+  $('licScreen').style.display='flex';
+  const p=DB.get('license',null);
+  $('licMsg').innerHTML= mode==='clock'
+    ? `<div class="lic-status err"><b>Data/hora do aparelho voltou no tempo.</b> Acerte o relógio do dispositivo e recarregue a página.</div>`
+    : mode==='locked'
+    ? `<div class="lic-status err"><b>Assinatura vencida${p?` em ${todayStr(p.exp)}`:''}.</b> Suas vendas e cadastros estão guardados — nada foi apagado. Para voltar a usar, ative uma nova chave abaixo.</div>`
+    : `<div class="lic-status warn">Para começar a usar o PinhoPDV, cole a chave de ativação que você recebeu na contratação.</div>`;
+  $('licExtra').innerHTML= mode==='locked'
+    ? `<button class="btn btn-ghost btn-block" onclick="exportBackup()">⬇ Exportar backup dos meus dados</button>`:'';
+  $('licSupport').textContent=p?.c?`Para renovar, fale com o suporte: ${p.c}`:'Para obter ou renovar uma chave, fale com quem forneceu o sistema.';
+}
+async function activateKey(){
+  const r=await licVerify($('licKey').value);
+  if(!r.ok){$('licMsg').innerHTML=`<div class="lic-status err">${esc(r.why)}</div>`;return}
+  if(r.p.exp<Date.now()){$('licMsg').innerHTML=`<div class="lic-status err">Esta chave venceu em ${todayStr(r.p.exp)}. Peça uma chave nova.</div>`;return}
+  DB.set('license',r.p);DB.set('licenseKey',r.clean);
+  $('licKey').value='';$('licScreen').style.display='none';
+  toast('Assinatura ativada até '+todayStr(r.p.exp)+' — bom trabalho, '+r.p.n+'!');
+  if(session&&S.users.some(u=>u.id===session.id))enterApp();
+  else{session=null;$('loginScreen').style.display='flex'}
+}
+function updateLicBanner(){
+  const s=licState(),el=$('licBanner');if(!el)return;
+  if(s.st==='warn'){el.className='warn';$('licBannerTxt').textContent='Sua assinatura vence em '+licDays(s.left)+' dia(s) — '+todayStr(s.p.exp)+'. Renove para não parar as vendas.'}
+  else if(s.st==='grace'){el.className='danger';$('licBannerTxt').textContent='Assinatura vencida! O sistema bloqueia em '+licDays(LIC_GRACE+s.left)+' dia(s). Renove agora.'}
+  else el.className='';
+}
+function licGuard(){ // chamada nos pontos de uso; true = pode seguir
+  if(!tickClock()){licScreenShow('clock');return false}
+  const s=licState();
+  if(s.st==='locked'){licScreenShow('locked');return false}
+  if(s.st==='none'){licScreenShow('first');return false}
+  updateLicBanner();return true;
+}
+function openLicModal(){
+  const s=licState(),p=s.p;
+  openModal('Assinatura',`
+    ${p?`<div class="lic-status ${s.st==='active'?'ok':s.st==='warn'?'warn':'err'}">
+      <b>${esc(p.n)}</b><br>Válida até <b>${todayStr(p.exp)}</b> ${s.left>0?'('+licDays(s.left)+' dia(s) restantes)':'— vencida'}
+      ${p.c?`<br>Suporte: ${esc(p.c)}`:''}</div>`:''}
+    <div class="field"><label>Nova chave de ativação</label><textarea id="licKey2" style="width:100%;min-height:90px;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#FCFBF7;font-family:var(--mono);font-size:.78rem" placeholder="Cole a nova chave aqui para renovar"></textarea></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Fechar</button><button class="btn btn-money" onclick="renewKey()">Ativar nova chave</button>`);
+}
+async function renewKey(){
+  const r=await licVerify($('licKey2').value);
+  if(!r.ok)return toast(r.why,'err');
+  if(r.p.exp<Date.now())return toast('Esta chave já está vencida ('+todayStr(r.p.exp)+').','err');
+  DB.set('license',r.p);DB.set('licenseKey',r.clean);
+  closeModal();updateLicBanner();toast('Assinatura renovada até '+todayStr(r.p.exp)+' ✓');
 }
 
 /* ---------- MODAL GENÉRICO ---------- */
@@ -696,7 +905,7 @@ function enterApp(){
   $('userAvatar').textContent=(session.name[0]||'?').toUpperCase();
   document.querySelectorAll('[data-perm]').forEach(el=>{el.style.display=can(el.dataset.perm)?'':'none'});
   document.querySelectorAll('[data-perm-act]').forEach(el=>{el.style.display=can(el.dataset.permAct)?'':'none'});
-  applyStoreName();updateCashPill();go('pdv');
+  applyStoreName();updateCashPill();updateLicBanner();go('pdv');
 }
 function applyStoreName(){
   const n=S.settings.storeName||'PinhoPDV';
@@ -858,6 +1067,7 @@ const PAY_METHODS=[
 ];
 const payLabel=id=>PAY_METHODS.find(m=>m.id===id)?.label||id;
 function openPayModal(){
+  if(!licGuard())return;
   if(!ticket.items.length)return;
   if(!openCash())return toast('Abra o caixa antes de cobrar','warn');
   const c=ticketCalc();
@@ -1335,6 +1545,11 @@ function renderConfig(){
         <button class="btn btn-primary" onclick="saveSettings()">Salvar dados da loja</button>
       </div>
       <div class="card card-pad">
+        <h3 style="font-size:1rem;margin-bottom:6px">Assinatura</h3>
+        ${(()=>{const s=licState();return s.p?`<p style="font-size:.86rem;line-height:1.6;margin-bottom:12px">Cliente: <b>${esc(s.p.n)}</b><br>Válida até: <b class="money">${todayStr(s.p.exp)}</b> ${s.left>0?`<span class="chip ${s.st==='active'?'chip-ok':'chip-warn'}">${licDays(s.left)} dia(s)</span>`:'<span class="chip chip-bad">vencida</span>'}${s.p.c?`<br>Suporte: ${esc(s.p.c)}`:''}</p>`:'<p style="font-size:.86rem;color:var(--txt-soft);margin-bottom:12px">Nenhuma assinatura ativa neste aparelho.</p>'})()}
+        <button class="btn btn-primary btn-sm" onclick="openLicModal()">Inserir / renovar chave</button>
+      </div>
+      <div class="card card-pad">
         <h3 style="font-size:1rem;margin-bottom:6px">Cor do sistema</h3>
         <p style="font-size:.84rem;color:var(--txt-soft);margin-bottom:14px">Escolha a cor da interface. Vale para este dispositivo e aparece já na tela de login — operadores também podem trocar pelo botão de paleta no menu.</p>
         ${themePickerHTML()}
@@ -1454,6 +1669,7 @@ window.addEventListener('beforeunload',e=>{if(ticket.items.length){e.preventDefa
   if(S.settings.storeName==='Caixa Verde'){S.settings.storeName='PinhoPDV';save('settings')} // migração do nome padrão antigo
   applyTheme(S.settings.theme||'verde');
   await ensureAdmin();
+  if(!licGuard())return;
   if(!DB.ok)toast('Aviso: armazenamento do navegador indisponível — os dados não serão salvos ao fechar. Hospede o arquivo (https) para persistência.','warn');
   if(session&&S.users.some(u=>u.id===session.id))enterApp();
   else{session=null;$('loginScreen').style.display='flex'}
